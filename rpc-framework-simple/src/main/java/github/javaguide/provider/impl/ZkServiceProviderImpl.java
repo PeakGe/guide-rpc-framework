@@ -27,9 +27,9 @@ public class ZkServiceProviderImpl implements ServiceProvider {
      * key: rpc service name(interface name + version + group)
      * value: service object
      */
-    private final Map<String, Object> serviceMap;
-    private final Set<String> registeredService;
-    private final ServiceRegistry serviceRegistry;
+    private final Map<String, Object> serviceMap;//
+    private final Set<String> registeredService;//已注册的rpc服务集合
+    private final ServiceRegistry serviceRegistry;//
 
     public ZkServiceProviderImpl() {
         serviceMap = new ConcurrentHashMap<>();
