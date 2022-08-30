@@ -22,7 +22,7 @@ public class CustomThreadPoolConfig {
     private static final int DEFAULT_CORE_POOL_SIZE = 10;
     private static final int DEFAULT_MAXIMUM_POOL_SIZE_SIZE = 100;
     private static final int DEFAULT_KEEP_ALIVE_TIME = 1;
-    private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MINUTES;
+    private static final TimeUnit DEFAULT_TIME_UNIT = TimeUnit.MINUTES;//默认时间单位分钟
     private static final int DEFAULT_BLOCKING_QUEUE_CAPACITY = 100;
     private static final int BLOCKING_QUEUE_CAPACITY = 100;
     /**

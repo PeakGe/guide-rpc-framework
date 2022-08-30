@@ -24,9 +24,9 @@ public final class ExtensionLoader<T> {
     private static final Map<Class<?>, ExtensionLoader<?>> EXTENSION_LOADERS = new ConcurrentHashMap<>();
     private static final Map<Class<?>, Object> EXTENSION_INSTANCES = new ConcurrentHashMap<>();
 
-    private final Class<?> type;
+    private final Class<?> type;//用于确定要加载的类们所在资源文件的文件名（在META-INF/extensions/目录下）
     private final Map<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<>();
-    private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>();
+    private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>();//缓存已加载的Class对象<缩写名-Class对象>
 
     private ExtensionLoader(Class<?> type) {
         this.type = type;
@@ -93,10 +93,17 @@ public final class ExtensionLoader<T> {
         return instance;
     }
 
+    /**
+     * 使用ExtensionLoader类的加载器加载type指定的文件中所有列出的类，后放入<缩写名-Class对象>cachedClasses缓存中
+     * @param
+     * @return: java.util.Map<java.lang.String,java.lang.Class<?>>
+     * @author: gefeng
+     * @date: 2022/8/30 19:07
+     */
     private Map<String, Class<?>> getExtensionClasses() {
         // get the loaded extension class from the cache
         Map<String, Class<?>> classes = cachedClasses.get();
-        // double check
+        // double check-双重检查
         if (classes == null) {
             synchronized (cachedClasses) {
                 classes = cachedClasses.get();
@@ -111,6 +118,13 @@ public final class ExtensionLoader<T> {
         return classes;
     }
 
+    /**
+     * 使用ExtensionLoader类的加载器加载type指定的文件中所有列出的类，后放入<缩写名-Class对象>extensionClasses中
+     * @param extensionClasses 1
+     * @return: void
+     * @author: gefeng
+     * @date: 2022/8/30 18:57
+     */
     private void loadDirectory(Map<String, Class<?>> extensionClasses) {
         String fileName = ExtensionLoader.SERVICE_DIRECTORY + type.getName();
         try {
@@ -128,6 +142,16 @@ public final class ExtensionLoader<T> {
         }
     }
 
+    /**
+     * 使用指定类加载器（classLoader）加载指定资源（resourceUrl）中的列出的所有类，并放入（<name-Class对象>）的map中（extensionClasses）
+     * 资源中格式例（name-全类名）：zk=github.javaguide.registry.zk.ZkServiceRegistryImpl
+     * @param extensionClasses 1
+     * @param classLoader 2
+     * @param resourceUrl 3
+     * @return: void
+     * @author: gefeng
+     * @date: 2022/8/30 18:44
+     */
     private void loadResource(Map<String, Class<?>> extensionClasses, ClassLoader classLoader, URL resourceUrl) {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(resourceUrl.openStream(), UTF_8))) {
             String line;

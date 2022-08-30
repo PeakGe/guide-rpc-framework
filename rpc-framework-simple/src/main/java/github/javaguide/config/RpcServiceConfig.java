@@ -32,10 +32,24 @@ public class RpcServiceConfig {
      */
     private Object service;
 
+    /**
+     * 获取RPC服务名字=服务Class对象第一个接口名字+组名+版本名
+     * @param
+     * @return: java.lang.String
+     * @author: gefeng
+     * @date: 2022/8/30 20:01
+     */
     public String getRpcServiceName() {
         return this.getServiceName() + this.getGroup() + this.getVersion();
     }
 
+    /**
+     * 获取服务的名字=服务Class对象实现的第一个接口的全名字
+     * @param
+     * @return: java.lang.String
+     * @author: gefeng
+     * @date: 2022/8/30 19:57
+     */
     public String getServiceName() {
         return this.service.getClass().getInterfaces()[0].getCanonicalName();
     }

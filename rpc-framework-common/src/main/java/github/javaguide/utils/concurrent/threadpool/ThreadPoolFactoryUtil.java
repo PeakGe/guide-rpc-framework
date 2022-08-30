@@ -33,6 +33,14 @@ public final class ThreadPoolFactoryUtil {
 
     }
 
+    /**
+     * 若以threadNamePrefix为名字前缀的线程池没有创建过则创建，使用CustomThreadPoolConfig默认配置+非守护线程
+     * 若以threadNamePrefix为名字前缀的线程池已存在则重新创建，
+     * @param threadNamePrefix 1
+     * @return: java.util.concurrent.ExecutorService
+     * @author: gefeng
+     * @date: 2022/8/30 17:47
+     */
     public static ExecutorService createCustomThreadPoolIfAbsent(String threadNamePrefix) {
         CustomThreadPoolConfig customThreadPoolConfig = new CustomThreadPoolConfig();
         return createCustomThreadPoolIfAbsent(customThreadPoolConfig, threadNamePrefix, false);

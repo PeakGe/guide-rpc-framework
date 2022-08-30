@@ -9,7 +9,7 @@ import java.net.InetSocketAddress;
 
 /**
  * service registration  based on zookeeper
- *
+ * 提供RPC服务注册功能
  * @author shuang.kou
  * @createTime 2020年05月31日 10:56:00
  */
@@ -17,7 +17,9 @@ import java.net.InetSocketAddress;
 public class ZkServiceRegistryImpl implements ServiceRegistry {
 
     /**
-     *
+     * 利用zookeeper注册服务（节点包含了名字和服务地址）
+     * 1.在/my-rpc节点下新增持久节点表示该服务
+     * 2.节点名=RPC服务名+/ip:端口
      * @param rpcServiceName rpc服务名
      * @param inetSocketAddress 2
      * @return: void
