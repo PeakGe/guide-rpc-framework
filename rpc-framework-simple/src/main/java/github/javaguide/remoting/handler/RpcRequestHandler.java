@@ -26,6 +26,7 @@ public class RpcRequestHandler {
 
     /**
      * Processing rpcRequest: call the corresponding method, and then return the method
+     * 通过反射调用对应服务实现类的对应的方法
      */
     public Object handle(RpcRequest rpcRequest) {
         Object service = serviceProvider.getService(rpcRequest.getRpcServiceName());
@@ -34,6 +35,7 @@ public class RpcRequestHandler {
 
     /**
      * get method execution results
+     * 通过反射执行指定方法和参数类型的方法，传入rpcRequest消息中送的参数
      *
      * @param rpcRequest client request
      * @param service    service object

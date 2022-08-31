@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * initialize and close Bootstrap object
- *
+ * 基于 Netty通信传输RpcRequest
  * @author shuang.kou
  * @createTime 2020年05月29日 17:51:00
  */

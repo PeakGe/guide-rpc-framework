@@ -49,7 +49,7 @@ public class RpcClientProxy implements InvocationHandler {
     }
 
     /**
-     * get the proxy object
+     * get the proxy object-获取指定类的代理类对象
      */
     @SuppressWarnings("unchecked")
     public <T> T getProxy(Class<T> clazz) {
@@ -59,6 +59,10 @@ public class RpcClientProxy implements InvocationHandler {
     /**
      * This method is actually called when you use a proxy object to call a method.
      * The proxy object is the object you get through the getProxy method.
+     * 通过代理对象调用方法时，该方法将被调用
+     * 1.构建RpcRequest对象，对象的方法名，参数等属性从method和args获取；接口实现类的版本，接口实现类的组从rpcServiceConfig中获取
+     * 2.根据客户端类型选择相应通信方式发送RPC请求得到响应，转化为RpcResponse<Object>类型对象
+     * 3.校验响应消息，若失败，抛出相应异常；成功，返回结果
      */
     @SneakyThrows
     @SuppressWarnings("unchecked")
@@ -74,11 +78,11 @@ public class RpcClientProxy implements InvocationHandler {
                 .version(rpcServiceConfig.getVersion())
                 .build();
         RpcResponse<Object> rpcResponse = null;
-        if (rpcRequestTransport instanceof NettyRpcClient) {
+        if (rpcRequestTransport instanceof NettyRpcClient) {//netty通信- NIO形式
             CompletableFuture<RpcResponse<Object>> completableFuture = (CompletableFuture<RpcResponse<Object>>) rpcRequestTransport.sendRpcRequest(rpcRequest);
             rpcResponse = completableFuture.get();
         }
-        if (rpcRequestTransport instanceof SocketRpcClient) {
+        if (rpcRequestTransport instanceof SocketRpcClient) {//socket通信-阻塞IO形式
             rpcResponse = (RpcResponse<Object>) rpcRequestTransport.sendRpcRequest(rpcRequest);
         }
         this.check(rpcResponse, rpcRequest);
@@ -86,14 +90,15 @@ public class RpcClientProxy implements InvocationHandler {
     }
 
     private void check(RpcResponse<Object> rpcResponse, RpcRequest rpcRequest) {
+        //服务调用失败
         if (rpcResponse == null) {
             throw new RpcException(RpcErrorMessageEnum.SERVICE_INVOCATION_FAILURE, INTERFACE_NAME + ":" + rpcRequest.getInterfaceName());
         }
-
+        //返回结果错误！请求和返回的相应不匹配
         if (!rpcRequest.getRequestId().equals(rpcResponse.getRequestId())) {
             throw new RpcException(RpcErrorMessageEnum.REQUEST_NOT_MATCH_RESPONSE, INTERFACE_NAME + ":" + rpcRequest.getInterfaceName());
         }
-
+        //服务调用失败
         if (rpcResponse.getCode() == null || !rpcResponse.getCode().equals(RpcResponseCodeEnum.SUCCESS.getCode())) {
             throw new RpcException(RpcErrorMessageEnum.SERVICE_INVOCATION_FAILURE, INTERFACE_NAME + ":" + rpcRequest.getInterfaceName());
         }

@@ -12,6 +12,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 /**
+ * Socket封装处理任务类
  * @author shuang.kou
  * @createTime 2020年05月10日 09:18:00
  */
@@ -22,10 +23,19 @@ public class SocketRpcRequestHandlerRunnable implements Runnable {
 
 
     public SocketRpcRequestHandlerRunnable(Socket socket) {
-        this.socket = socket;
-        this.rpcRequestHandler = SingletonFactory.getInstance(RpcRequestHandler.class);
+        this.socket = socket;//被封装的socket对象
+        this.rpcRequestHandler = SingletonFactory.getInstance(RpcRequestHandler.class);//RpcRequestHandler类（封装了RPC服务的生产者）的单例
     }
 
+    /**
+     * 1.读取socket的输入消息，序列化为RpcRequest对象
+     * 2.交给rpcRequestHandler处理（执行指定接口实现类的指定方法）
+     * 3.将处理后的结果封装为RpcResponse写入socket的输出流
+     * @param
+     * @return: void
+     * @author: gefeng
+     * @date: 2022/8/31 10:21
+     */
     @Override
     public void run() {
         log.info("server handle message from client by thread: [{}]", Thread.currentThread().getName());

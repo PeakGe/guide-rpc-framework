@@ -33,7 +33,7 @@ public final class CuratorUtils {
     private static final int MAX_RETRIES = 3;
     public static final String ZK_REGISTER_ROOT_PATH = "/my-rpc";
     private static final Map<String, List<String>> SERVICE_ADDRESS_MAP = new ConcurrentHashMap<>();
-    private static final Set<String> REGISTERED_PATH_SET = ConcurrentHashMap.newKeySet();
+    private static final Set<String> REGISTERED_PATH_SET = ConcurrentHashMap.newKeySet();//zookeeper上已注册节点路径集合
     private static CuratorFramework zkClient;
     private static final String DEFAULT_ZOOKEEPER_ADDRESS = "127.0.0.1:2181";
 
@@ -84,6 +84,7 @@ public final class CuratorUtils {
 
     /**
      * Empty the registry of data
+     * 清除zookeeper上路径以inetSocketAddress（ip:port）结尾的节点
      */
     public static void clearRegistry(CuratorFramework zkClient, InetSocketAddress inetSocketAddress) {
         REGISTERED_PATH_SET.stream().parallel().forEach(p -> {

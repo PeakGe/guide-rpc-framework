@@ -9,6 +9,7 @@ import lombok.ToString;
 import java.io.Serializable;
 
 /**
+ * RPC请求类，包含请求id，远程方法接口名，方法名，方法参数数组，参数类型数组，接口实现类的版本，接口实现类的组
  * @author shuang.kou
  * @createTime 2020年05月10日 08:24:00
  */

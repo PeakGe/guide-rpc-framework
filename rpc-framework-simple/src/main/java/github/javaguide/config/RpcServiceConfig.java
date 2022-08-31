@@ -33,7 +33,7 @@ public class RpcServiceConfig {
     private Object service;
 
     /**
-     * 获取RPC服务名字=服务Class对象第一个接口名字+组名+版本名
+     * 获取RPC服务名字=服务Class对象实现的第一个接口全名字+组名+版本名
      * @param
      * @return: java.lang.String
      * @author: gefeng

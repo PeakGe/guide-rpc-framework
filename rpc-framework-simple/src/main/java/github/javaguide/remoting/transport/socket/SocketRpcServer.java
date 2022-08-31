@@ -47,7 +47,7 @@ public class SocketRpcServer {
 
     /**
      * 1.创建服务端Socket实例，绑定本机ip和NettyRpcServer指定端口（9998）
-     * 2. todo CustomShutdownHook.getCustomShutdownHook().clearAll();
+     * 2.创建java的钩子方法在JVM销毁前释放资源（zookeeper节点和线程池）
      * 3.将接收到的socket请求消息封装成任务放入线程池处理
      * 4.
      * @param

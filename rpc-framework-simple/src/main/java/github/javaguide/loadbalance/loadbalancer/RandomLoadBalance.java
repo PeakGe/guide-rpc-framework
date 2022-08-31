@@ -8,7 +8,7 @@ import java.util.Random;
 
 /**
  * Implementation of random load balancing strategy
- *
+ * 随机选择-负载均衡
  * @author shuang.kou
  * @createTime 2020年06月21日 07:47:00
  */

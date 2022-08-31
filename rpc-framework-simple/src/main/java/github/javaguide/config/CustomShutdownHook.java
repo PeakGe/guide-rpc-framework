@@ -23,8 +23,18 @@ public class CustomShutdownHook {
         return CUSTOM_SHUTDOWN_HOOK;
     }
 
+    /**
+     * 利用java的钩子方法在JVM销毁前释放资源
+     * 1.清除zookeeper上路径以ip:port结尾的节点
+     * 2.关闭所有线程池
+     * @param
+     * @return: void
+     * @author: gefeng
+     * @date: 2022/8/31 10:07
+     */
     public void clearAll() {
         log.info("addShutdownHook for clearAll");
+        //Runtime.getRuntime().addShutdownHook(Thread hook):JVM销毁前要执行的一个线程，一般用于资源回收场景
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
                 InetSocketAddress inetSocketAddress = new InetSocketAddress(InetAddress.getLocalHost().getHostAddress(), NettyRpcServer.PORT);
