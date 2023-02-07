@@ -53,7 +53,15 @@ public class ConsistentHashLoadBalance extends AbstractLoadBalance {
         private final TreeMap<Long, String> virtualInvokers;//对key（虚拟节点的hashCode）排序的Map
 
         private final int identityHashCode;
-
+        /**
+         *
+         * @param invokers 服务地址列表
+         * @param replicaNumber 每个主节点对应的虚拟节点数量（主节点+虚拟节点）
+         * @param identityHashCode 服务地址列表对应的hashcode
+         * @return:
+         * @author: gefeng
+         * @date: 2022/9/21 15:25
+         */
         ConsistentHashSelector(List<String> invokers, int replicaNumber, int identityHashCode) {
             this.virtualInvokers = new TreeMap<>();
             this.identityHashCode = identityHashCode;

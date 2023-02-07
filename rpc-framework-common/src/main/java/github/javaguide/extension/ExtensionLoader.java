@@ -20,18 +20,27 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @Slf4j
 public final class ExtensionLoader<T> {
 
-    private static final String SERVICE_DIRECTORY = "META-INF/extensions/";
-    private static final Map<Class<?>, ExtensionLoader<?>> EXTENSION_LOADERS = new ConcurrentHashMap<>();
-    private static final Map<Class<?>, Object> EXTENSION_INSTANCES = new ConcurrentHashMap<>();
+    //类信息
+    private static final String SERVICE_DIRECTORY = "META-INF/extensions/";//需要加载的类们资源文件的目录
+    private static final Map<Class<?>, ExtensionLoader<?>> EXTENSION_LOADERS = new ConcurrentHashMap<>();//接口的Class对象-类加载器Map
+    private static final Map<Class<?>, Object> EXTENSION_INSTANCES = new ConcurrentHashMap<>();//接口实现类Class对象-类实例Map
 
-    private final Class<?> type;//用于确定要加载的类们所在资源文件的文件名（在META-INF/extensions/目录下）
-    private final Map<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<>();
-    private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>();//缓存已加载的Class对象<缩写名-Class对象>
+    //对象信息（一个type对应一个ExtensionLoader对象）
+    private final Class<?> type;//需要加载的接口全类名（用于确定要加载的类们所在资源文件的文件名（在META-INF/extensions/目录下））
+    private final Map<String, Holder<Object>> cachedInstances = new ConcurrentHashMap<>();//缓存已加载的扩展名对应实现类的实例<扩展名-扩展名对应实现类的实例>
+    private final Holder<Map<String, Class<?>>> cachedClasses = new Holder<>();//缓存已加载的Class对象<扩展名-实现类Class对象>
 
     private ExtensionLoader(Class<?> type) {
         this.type = type;
     }
 
+    /**
+     * 获取指定接口全类名的扩展名加载器实例，并加入EXTENSION_LOADERS中
+     * @param type 需要加载的接口全类名(必须用SPI注解)
+     * @return: github.javaguide.extension.ExtensionLoader<S>
+     * @author: gefeng
+     * @date: 2023/2/7 15:04
+     */
     public static <S> ExtensionLoader<S> getExtensionLoader(Class<S> type) {
         if (type == null) {
             throw new IllegalArgumentException("Extension type should not be null.");
@@ -51,6 +60,15 @@ public final class ExtensionLoader<T> {
         return extensionLoader;
     }
 
+    /**
+     * 获取ExtensionLoader指定扩展名的接口实现类实例，并封装为Holder类型放入cachedInstances中
+     * 1.尝试从cachedInstances中获取指定扩展名对应实现类的实例
+     * 2.获取失败，则createExtension(name)创建（双重检查加锁）
+     * @param name 接口实现类扩展名
+     * @return: T
+     * @author: gefeng
+     * @date: 2023/2/7 15:08
+     */
     public T getExtension(String name) {
         if (StringUtil.isBlank(name)) {
             throw new IllegalArgumentException("Extension name should not be null or empty.");
@@ -75,6 +93,17 @@ public final class ExtensionLoader<T> {
         return (T) instance;
     }
 
+    /**
+     * 获取指定扩展名对应实现类的实例
+     * 1.使用ExtensionLoader类的加载器加载type指定的文件中所有列出的类，后放入<扩展名-实现类Class对象>cachedClasses缓存中，得到该map
+     * 2.从该map中获取指定扩展名对应的实现类Class对象
+     * 3.尝试从EXTENSION_INSTANCES获取该实现类Class对象的实例
+     * 4.获取失败，则clazz.newInstance()创建实例，并放入EXTENSION_INSTANCES
+     * @param name 需要创建实现类实例的扩展名
+     * @return: T
+     * @author: gefeng
+     * @date: 2023/2/7 15:23
+     */
     private T createExtension(String name) {
         // load all extension classes of type T from file and get specific one by name
         Class<?> clazz = getExtensionClasses().get(name);
@@ -94,7 +123,7 @@ public final class ExtensionLoader<T> {
     }
 
     /**
-     * 使用ExtensionLoader类的加载器加载type指定的文件中所有列出的类，后放入<缩写名-Class对象>cachedClasses缓存中
+     * 使用ExtensionLoader类的加载器加载type指定的文件中所有列出的类，后放入<扩展名-实现类Class对象>cachedClasses缓存中，并返回该map
      * @param
      * @return: java.util.Map<java.lang.String,java.lang.Class<?>>
      * @author: gefeng
@@ -119,7 +148,10 @@ public final class ExtensionLoader<T> {
     }
 
     /**
-     * 使用ExtensionLoader类的加载器加载type指定的文件中所有列出的类，后放入<缩写名-Class对象>extensionClasses中
+     * 1.根据type接口全类名获取该type对应的资源文件名
+     * 2.获取ExtensionLoader的类加载器
+     * 3.使用ExtensionLoader类的加载器加载type指定的文件中所有列出扩展名的实现类
+     * 使用ExtensionLoader类的加载器加载type指定的文件中所有列出的实现类，后放入<扩展名-实现类Class对象>extensionClasses中
      * @param extensionClasses 1
      * @return: void
      * @author: gefeng
@@ -143,8 +175,8 @@ public final class ExtensionLoader<T> {
     }
 
     /**
-     * 使用指定类加载器（classLoader）加载指定资源（resourceUrl）中的列出的所有类，并放入（<name-Class对象>）的map中（extensionClasses）
-     * 资源中格式例（name-全类名）：zk=github.javaguide.registry.zk.ZkServiceRegistryImpl
+     * 使用指定类加载器（classLoader）加载指定资源（resourceUrl）中的列出的所有类
+     * 资源中格式例（扩展名-全类名）：zk=github.javaguide.registry.zk.ZkServiceRegistryImpl
      * @param extensionClasses 1
      * @param classLoader 2
      * @param resourceUrl 3

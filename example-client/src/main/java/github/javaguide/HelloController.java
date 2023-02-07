@@ -9,6 +9,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class HelloController {
 
+    /**
+     * @RpcReference中version和group指定了HelloService的具体实现类
+     * @param null 1
+     * @return:
+     * @author: gefeng
+     * @date: 2023/2/7 14:43
+     */
     @RpcReference(version = "version1", group = "test1")
     private HelloService helloService;
 

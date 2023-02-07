@@ -81,7 +81,7 @@ public class ZkServiceProviderImpl implements ServiceProvider {
     /**
      * 发布服务
      * 1.创建1个InetSocketAddress对象封装ip和NettyRpcServer端口（9998）用于通信
-     * 2.添加服务
+     * 2.添加服务到serviceMap和registeredService
      * 3.在zookeeper中创建该服务对应节点，名字包含了RPC服务名和地址（ip+端口）
      * @param rpcServiceConfig 1
      * @return: void

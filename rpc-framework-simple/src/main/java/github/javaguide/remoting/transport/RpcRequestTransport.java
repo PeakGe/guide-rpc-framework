@@ -5,7 +5,7 @@ import github.javaguide.remoting.dto.RpcRequest;
 
 /**
  * send RpcRequest。
- * RPC请求发送接口，两种实现：Netty通信-NIO模式；Socket通信-阻塞模式
+ * RPC请求发送接口，两种实现：Netty通信-NIO模式客户端；Socket通信-阻塞模式客户端
  * @author shuang.kou
  * @createTime 2020年05月29日 13:26:00
  */
